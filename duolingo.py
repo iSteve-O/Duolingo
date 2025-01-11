@@ -46,7 +46,7 @@ class Duolingo(object):
     USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 " \
                  "Safari/537.36"
 
-    def __init__(self, username, password=None, *, jwt=None, session_file=None):
+    def __init__(self, username, password=None, *, jwt, session_file=None):
         """
         :param username: Username to use for duolingo
         :param password: Password to authenticate as user.
@@ -97,7 +97,8 @@ class Duolingo(object):
             self._load_session_from_file()
         if self._check_login():
             return True
-        self.jwt = None
+# This line removed to attempt to fix
+#        self.jwt = None
 
         login_url = "https://www.duolingo.com/login"
         data = {"login": self.username, "password": self.password}
