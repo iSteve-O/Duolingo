@@ -1,0 +1,16 @@
+#Use this to setup MQTT sensors in Home Assistant for the example AppDaemon App or python script.
+sensor:
+  - name: "Duolingo Streak"
+    unique_id: duolingo_streak
+    state_topic: "duolingo/streak/site_streak"
+    value_template: "{{ value_json.state }}"
+    json_attributes_topic: "duolingo/streak/site_streak"
+  - name: "Duolingo Streak Extended"
+    unique_id: duolingo_streak_extended
+    state_topic: "duolingo/streak/streak_extended_today"
+    value_template: "{{ value_json.state }}"
+    json_attributes_topic: "duolingo/streak/streak_extended_today"
+
+#Home Assistant config must contain the following to use this seprate sensors file:
+#
+#mqtt: !include mqtt_sensors.yaml
