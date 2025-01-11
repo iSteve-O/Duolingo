@@ -1,0 +1,15 @@
+#Replace USERNAME in URL with your Duolingo username to get your streak on a picture card in the HA dashboard.
+type: picture
+image: >-
+  https://duolingo-stats-card.vercel.app/api?username=USERNAME&theme=purple-gang&sort=xp
+alt_text: Duolingo
+hold_action:
+  action: url
+  url_path: https://www.duolingo.com/
+tap_action:
+  action: none
+card_mod:
+  style: |
+    ha-card {
+      background: #7209b7;
+    }
