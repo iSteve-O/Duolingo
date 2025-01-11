@@ -1,0 +1,87 @@
+alias: Duolingo Script Update
+description: Notify every 20 mins if not extended by 9pm, unless stopped or extended, & also reset at 12am.
+triggers:
+  - trigger: time
+    at: "00:01:00"
+    id: At 12:01 AM
+    enabled: true
+  - trigger: time
+    at: "21:00:00"
+    id: 9PM No Extension
+  - trigger: state
+    entity_id:
+      - sensor.duolingo_extended
+    from: "False"
+    to: "True"
+    id: Extended
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - At 12:01 AM
+        sequence:
+          - action: input_boolean.turn_off
+            data: {}
+            target:
+              entity_id: input_boolean.duo_stop_alert
+      - conditions:
+          - condition: trigger
+            id:
+              - 9PM No Extension
+          - condition: state
+            entity_id: sensor.duolingo_extended
+            state: "False"
+        sequence:
+          - alias: >-
+              Notify every 20 mins until extended or stop duo alert switch is
+              turned on
+            repeat:
+              sequence:
+                - action: notify.mobile_app_iphone
+                  data:
+                    message: You have not extended your streak yet. Open the app.
+                    title: Time for Duolingo!
+                    data:
+                      actions:
+                        - action: STOP_DUO_ALERT
+                          title: Stop Alert
+                          icon: sfsymbols:exclamationmark.octagon
+                        - action: CANCEL
+                          title: Cancel
+                          icon: sfsymbols:nosign
+                      tag: extend-duo-streak
+                      push:
+                        interruption-level: critical
+                - delay:
+                    hours: 0
+                    minutes: 20
+                    seconds: 0
+              until:
+                - condition: or
+                  conditions:
+                    - condition: state
+                      entity_id: sensor.duolingo_extended
+                      state: "True"
+                    - condition: state
+                      entity_id: input_boolean.duo_stop_alert
+                      state: "on"
+      - conditions:
+          - condition: trigger
+            id:
+              - Extended
+        sequence:
+          - action: notify.mobile_app_iphone
+            data:
+              message: clear_notification
+              data:
+                tag: extend-duo-streak
+                push:
+                  interruption-level: critical
+          - action: input_boolean.turn_off
+            data: {}
+            target:
+              entity_id: input_boolean.duo_stop_alert
+mode: parallel
+max: 5
